@@ -28,9 +28,18 @@ try:
     BOT = Config.get('3bot-settings', 'BOT_ENDPOINT')
     PORT = Config.get('3bot-settings', 'PORT')
 except:
-    print "Invalid configfile in: '%s'." % configfile
+    print "Invalid configfile in: '%s'. Could not find BOT or PORT declaration" % configfile
     print "You can find a basic configfile in the Documentation."
     sys.exit(2)
+
+try:
+    # Read secret key - never share yours!
+    SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
+except:
+    print "Invalid configfile in: '%s'. Could not find SECRET_KEY declaration" % configfile
+    print "You can find a basic configfile in the Documentation."
+    sys.exit(2)
+
 
 try:
     LOGFILE = Config.get('3bot-settings', 'LOGFILE')
@@ -154,7 +163,7 @@ class WorkerDeamon(Daemon):
 
         while True:
             request = server.recv(FLAGS)
-            request = threebot_crypto.decrypt(request)
+            request = threebot_crypto.decrypt(request, SECRET_KEY)
             logging.info("Received request")
             if request:
                 response = {'type': 'NOOP'}
@@ -164,7 +173,7 @@ class WorkerDeamon(Daemon):
                 else:
                     logging.info("Script request")
                     response = runCommand(request)
-                response = threebot_crypto.encrypt(response)
+                response = threebot_crypto.encrypt(response, SECRET_KEY)
                 server.send(response, flags=FLAGS)
                 logging.info("Sending response")
             else:
