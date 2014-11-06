@@ -178,7 +178,8 @@ class WorkerDeamon(Daemon):
                 logging.info("Sending response")
             else:
                 logging.error("Could not decrypt received message")
-                raise Exception("Could not decrypt message")
+                if self.debug_mode:
+                    raise Exception("Could not decrypt message")
             #server.send("", flags=FLAGS)
 
 
