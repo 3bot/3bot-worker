@@ -11,11 +11,20 @@ import threebot_crypto
 import logging
 
 configfile = '/etc/3bot/config.ini'
+pidfile = '/tmp/3bot-worker.pid'
 _default_logfile = '/etc/3bot/3bot.log'
 _default_loglevel = 'ERROR'
 
-if os.path.isfile(configfile):
-    Config = ConfigParser.ConfigParser()
+if os.environ['VIRTUAL_ENV']:
+    current_path = os.path.realpath(os.environ['VIRTUAL_ENV'])
+    local_configfile = os.path.join(current_path, 'config.ini')
+    pidfile = os.path.join(current_path, '3bot-worker.pid')
+
+Config = ConfigParser.ConfigParser()
+
+if local_configfile and os.path.isfile(local_configfile):
+    Config.read(local_configfile)
+elif os.path.isfile(configfile):
     Config.read(configfile)
 else:
     print "No configfile found in: '%s'" % configfile
@@ -186,11 +195,11 @@ class WorkerDeamon(Daemon):
 if __name__ == "__main__":
         if len(sys.argv) == 3:
             if 'start' == sys.argv[1] and 'debug' == sys.argv[2]:
-                daemon = WorkerDeamon('/tmp/3bot-worker.pid', debug_mode=True)
+                daemon = WorkerDeamon(pidfile, debug_mode=True)
                 daemon.start()
 
         elif len(sys.argv) == 2:
-            daemon = WorkerDeamon('/tmp/3bot-worker.pid')
+            daemon = WorkerDeamon(pidfile)
             if 'start' == sys.argv[1]:
                 daemon.start()
             elif 'stop' == sys.argv[1]:
