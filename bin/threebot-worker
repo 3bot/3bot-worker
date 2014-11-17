@@ -1,6 +1,0 @@
-#!/bin/bash
-
-echo "Hi!"
-# activate virtualenv
-# start worker
-# print info

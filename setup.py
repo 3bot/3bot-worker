@@ -21,5 +21,5 @@ setup(
     maintainer_email="renner@arteria.ch",
     url="https://github.com/3bot/3bot-worker",
     install_requires=open('requirements.txt').read().split('\n'),
-    scripts=['bin/threebot-worker'],
+    scripts=['threebot-worker/worker.py'],
 )
