@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from setuptools import setup
+from setuptools import find_packages
 from os.path import join, dirname
 import threebot_worker as app
 
@@ -20,6 +21,7 @@ setup(
     author_email="admin@arteria.ch",
     maintainer_email="renner@arteria.ch",
     url="https://github.com/3bot/3bot-worker",
+    packages=find_packages(),
     include_package_data=True,
     install_requires=open('requirements.txt').read().split('\n'),
     scripts=['threebot-worker/worker.py'],
