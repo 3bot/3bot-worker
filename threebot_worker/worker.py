@@ -6,9 +6,10 @@ import sys
 import subprocess
 import zmq
 import ConfigParser
-from daemon import Daemon
-import threebot_crypto
 import logging
+
+import threebot_crypto
+from threebot_worker.daemon import Daemon
 
 configfile = '/etc/3bot/config.ini'
 pidfile = '/tmp/3bot-worker.pid'
