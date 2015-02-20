@@ -148,15 +148,24 @@ def runCommand(request):
         callable = script_bits[0]
 
     # execute task script
-    p = subprocess.Popen(callable, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    # http://www.saltycrane.com/blog/2008/09/how-get-stdout-and-stderr-using-python-subprocess-module/
+    p = subprocess.Popen(callable, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     logging.info("Executing Script file at: %s" % task_path)
+    t_stdout = ""
+    t_stderr = ""
 
-    ans = ""
-    for line in iter(p.stdout.readline, b''):
-        ans += line
-    exit_code = p.wait()
+    try:
+        t_stdout = p.stdout.read()
+    except AttributeError, e:
+        logging.info(e)
+
+    try:
+        t_stderr = p.stderr.read()
+    except AttributeError, e:
+        logging.info(e)
+
+    response = {'stdout': t_stdout, 'stderr': t_stderr, 'exit_code': p.wait()}
     del p
-    response = {'output': ans, 'exit_code': exit_code}
 
     return response
 
