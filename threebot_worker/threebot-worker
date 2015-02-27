@@ -19,7 +19,6 @@ BASEDIR = os.path.join(os.path.expanduser("~"), BASE_FOLDERNAME)
 if os.environ.get('VIRTUAL_ENV', False):  # in case worker runs in a virtualenv, set BASEDIR to path of virtualenv
     BASEDIR = os.path.join(os.path.realpath(os.environ['VIRTUAL_ENV']), BASE_FOLDERNAME)
 
-
 CONFIGFILE = os.path.join(BASEDIR, 'config.ini')
 PIDFILE = os.path.join(BASEDIR, '3bot-worker.pid')
 SCRIPTDIR = os.path.join(BASEDIR, 'logs')
@@ -33,8 +32,20 @@ if os.path.isfile(CONFIGFILE):
     Config.read(CONFIGFILE)
 else:
     print "No configfile found in: '%s'" % CONFIGFILE
-    print "You can find a basic configfile in the Documentation."
-    sys.exit(2)
+    print "..."
+    print "Creating basic configfile in '%s'" % CONFIGFILE
+
+    cfgfile = open(CONFIGFILE, 'w')
+
+    # add the settings to the structure of the file, and lets write it out...
+    Config.add_section('3bot-settings')
+    Config.set('3bot-settings', 'BOT_ENDPOINT', '*')
+    s = raw_input('Enter PORT')
+    Config.set('3bot-settings', 'PORT', s)
+    s = raw_input('Enter SECRET_KEY')
+    Config.set('3bot-settings', 'SECRET_KEY', s)
+    Config.write(cfgfile)
+    cfgfile.close()
 
 FLAGS = 0
 
