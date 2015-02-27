@@ -54,9 +54,15 @@ except:
     sys.exit(2)
 
 
-LOGFILE = Config.get('3bot-settings', 'LOGFILE', LOGFILE)
-LOGLEVEL = Config.get('3bot-settings', 'LOGLEVEL', LOGLEVEL)
+try:
+    LOGFILE = Config.get('3bot-settings', 'LOGFILE')
+except ConfigParser.NoOptionError:
+    pass
 
+try:
+    LOGLEVEL = Config.get('3bot-settings', 'LOGLEVEL')
+except ConfigParser.NoOptionError:
+    pass
 
 if LOGLEVEL == 'DEBUG':
     loglevel = logging.DEBUG
