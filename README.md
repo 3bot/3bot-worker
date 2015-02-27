@@ -26,11 +26,13 @@ When you first run the threebot-worker Script you will be asked to enter a PORT 
 #### BOT_ENDPOINT
 
 default: *
+
 List of hosts the worker should accept connections from (this is not well tested yet)
 
 #### PORT
 
 default: None
+
 Port number the worker listens. This Port should be openend by your firewall. The port number from the 3bot application and threebot-worker settings must match.
 
 #### SECRET_KEY
@@ -41,11 +43,13 @@ The secret key is used to establish a secure connection from the 3bot applicatio
 #### LOGFILE
 
 default: `~/3bot/3bot.log`
+
 Path to the logfile. theebot-worker will log all incomming connections, performed workflows and errors
 
 #### LOGLEVEL
 
 default: `CRITICAL`
+
 Valid values for `LOGLEVEL` could be taken from [here](https://docs.python.org/2/howto/logging.html).
 
 ### Example for `confing.ini`
