@@ -16,16 +16,14 @@ pidfile = '/tmp/3bot-worker.pid'
 _default_logfile = '/etc/3bot/3bot.log'
 _default_loglevel = 'ERROR'
 
-if os.environ['VIRTUAL_ENV']:
+if os.environ.get('VIRTUAL_ENV', False):
     current_path = os.path.realpath(os.environ['VIRTUAL_ENV'])
-    local_configfile = os.path.join(current_path, 'config.ini')
+    configfile = os.path.join(current_path, 'config.ini')
     pidfile = os.path.join(current_path, '3bot-worker.pid')
 
 Config = ConfigParser.ConfigParser()
 
-if local_configfile and os.path.isfile(local_configfile):
-    Config.read(local_configfile)
-elif os.path.isfile(configfile):
+if os.path.isfile(configfile):
     Config.read(configfile)
 else:
     print "No configfile found in: '%s'" % configfile
@@ -43,7 +41,6 @@ except:
     sys.exit(2)
 
 try:
-    # Read secret key - never share yours!
     SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
 except:
     print "Invalid configfile in: '%s'. Could not find SECRET_KEY declaration" % configfile
@@ -72,9 +69,11 @@ elif _LOGLEVEL == 'ERROR':
 else:
     LOGLEVEL = logging.CRITICAL
 
-logging.basicConfig(filename=LOGFILE,
-        level=LOGLEVEL,
-        format='%(asctime)s %(message)s')
+logging.basicConfig(
+    filename=LOGFILE,
+    level=LOGLEVEL,
+    format='%(asctime)s %(message)s',
+)
 
 if len(sys.argv) == 2:
     if 'start' == sys.argv[1] or 'restart' == sys.argv[1]:
@@ -199,7 +198,7 @@ class WorkerDeamon(Daemon):
                 logging.error("Could not decrypt received message")
                 if self.debug_mode:
                     raise Exception("Could not decrypt message")
-            #server.send("", flags=FLAGS)
+            # server.send("", flags=FLAGS)
 
 
 if __name__ == "__main__":
