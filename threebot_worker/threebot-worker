@@ -32,18 +32,22 @@ if os.path.isfile(CONFIGFILE):
     Config.read(CONFIGFILE)
 else:
     print "No configfile found in: '%s'" % CONFIGFILE
-    print "..."
+    print "----"
     print "Creating basic configfile in '%s'" % CONFIGFILE
+    print "----"
 
     cfgfile = open(CONFIGFILE, 'w')
 
     # add the settings to the structure of the file, and lets write it out...
     Config.add_section('3bot-settings')
     Config.set('3bot-settings', 'BOT_ENDPOINT', '*')
-    s = raw_input('Enter PORT')
-    Config.set('3bot-settings', 'PORT', s)
-    s = raw_input('Enter SECRET_KEY')
-    Config.set('3bot-settings', 'SECRET_KEY', s)
+
+    port = raw_input('Enter PORT: ')
+    Config.set('3bot-settings', 'PORT', port)
+
+    sec_key = raw_input('Enter SECRET_KEY: ')
+    Config.set('3bot-settings', 'SECRET_KEY', sec_key)
+
     Config.write(cfgfile)
     cfgfile.close()
 
