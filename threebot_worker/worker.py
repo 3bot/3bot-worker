@@ -11,22 +11,28 @@ import logging
 import threebot_crypto
 from threebot_worker.daemon import Daemon
 
-configfile = '/etc/3bot/config.ini'
-pidfile = '/tmp/3bot-worker.pid'
-_default_logfile = '/etc/3bot/3bot.log'
-_default_loglevel = 'ERROR'
+PROTOCOL = 'tcp'
 
-if os.environ.get('VIRTUAL_ENV', False):
-    current_path = os.path.realpath(os.environ['VIRTUAL_ENV'])
-    configfile = os.path.join(current_path, 'config.ini')
-    pidfile = os.path.join(current_path, '3bot-worker.pid')
+BASE_FOLDERNAME = '3bot'
+BASEDIR = os.path.join(os.path.expanduser("~"), BASE_FOLDERNAME)
+
+if os.environ.get('VIRTUAL_ENV', False):  # in case worker runs in a virtualenv, set BASEDIR to path of virtualenv
+    BASEDIR = os.path.join(os.path.realpath(os.environ['VIRTUAL_ENV']), BASE_FOLDERNAME)
+
+
+CONFIGFILE = os.path.join(BASEDIR, 'config.ini')
+PIDFILE = os.path.join(BASEDIR, '3bot-worker.pid')
+SCRIPTDIR = os.path.join(BASEDIR, 'logs')
+
+LOGFILE = os.path.join(BASEDIR, '3bot.log')
+LOGLEVEL = 'ERROR'
 
 Config = ConfigParser.ConfigParser()
 
-if os.path.isfile(configfile):
-    Config.read(configfile)
+if os.path.isfile(CONFIGFILE):
+    Config.read(CONFIGFILE)
 else:
-    print "No configfile found in: '%s'" % configfile
+    print "No configfile found in: '%s'" % CONFIGFILE
     print "You can find a basic configfile in the Documentation."
     sys.exit(2)
 
@@ -36,57 +42,51 @@ try:
     BOT = Config.get('3bot-settings', 'BOT_ENDPOINT')
     PORT = Config.get('3bot-settings', 'PORT')
 except:
-    print "Invalid configfile in: '%s'. Could not find BOT or PORT declaration" % configfile
+    print "Invalid configfile in: '%s'. Could not find BOT or PORT declaration" % CONFIGFILE
     print "You can find a basic configfile in the Documentation."
     sys.exit(2)
 
 try:
     SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
 except:
-    print "Invalid configfile in: '%s'. Could not find SECRET_KEY declaration" % configfile
+    print "Invalid configfile in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE
     print "You can find a basic configfile in the Documentation."
     sys.exit(2)
 
 
-try:
-    LOGFILE = Config.get('3bot-settings', 'LOGFILE')
-except ConfigParser.NoOptionError:
-    LOGFILE = _default_logfile
+LOGFILE = Config.get('3bot-settings', 'LOGFILE', LOGFILE)
+LOGLEVEL = Config.get('3bot-settings', 'LOGLEVEL', LOGLEVEL)
 
-try:
-    _LOGLEVEL = Config.get('3bot-settings', 'LOGLEVEL', _default_loglevel)
-except ConfigParser.NoOptionError:
-    _LOGLEVEL = _default_loglevel
 
-if _LOGLEVEL == 'DEBUG':
-    LOGLEVEL = logging.DEBUG
-elif _LOGLEVEL == 'INFO':
-    LOGLEVEL = logging.INFO
-elif _LOGLEVEL == 'WARNING':
-    LOGLEVEL = logging.WARNING
-elif _LOGLEVEL == 'ERROR':
-    LOGLEVEL = logging.ERROR
+if LOGLEVEL == 'DEBUG':
+    loglevel = logging.DEBUG
+elif LOGLEVEL == 'INFO':
+    loglevel = logging.INFO
+elif LOGLEVEL == 'WARNING':
+    loglevel = logging.WARNING
+elif LOGLEVEL == 'ERROR':
+    loglevel = logging.ERROR
 else:
     LOGLEVEL = logging.CRITICAL
 
 logging.basicConfig(
     filename=LOGFILE,
-    level=LOGLEVEL,
+    level=loglevel,
     format='%(asctime)s %(message)s',
 )
 
 if len(sys.argv) == 2:
     if 'start' == sys.argv[1] or 'restart' == sys.argv[1]:
         print '---'
-        print "Try Starting Worker with following settings found in '%s'" % configfile
+        print "Try Starting Worker with following settings found in '%s'" % CONFIGFILE
         print 'ENDPOINT: %s' % str(BOT)
         print 'PORT: %s' % str(PORT)
         print 'LOGFILE: %s' % str(LOGFILE)
-        print 'LOGLEVEL: %s' % str(_LOGLEVEL)
+        print 'LOGLEVEL: %s' % str(LOGLEVEL)
         print '---'
 
 
-def writeScript(directory, script, body):
+def write_script(directory, script, body):
     # create and change to log directory
     task_path = os.path.join(directory, script)
 
@@ -101,7 +101,7 @@ def writeScript(directory, script, body):
     return task_path
 
 
-def runCommand(request):
+def run_command(request):
     """
     Calls the action
     """
@@ -110,9 +110,8 @@ def runCommand(request):
     log_time = request['workflow_log_time']
     workflow_name = request['workflow']
     foldername = "%s-%s-%s" % (log_time, str(log_id), workflow_name)
-    home = os.path.expanduser("~")
 
-    directory = os.path.join(home, '3bot', 'logs', foldername)
+    directory = os.path.join(SCRIPTDIR, foldername)
 
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -126,19 +125,19 @@ def runCommand(request):
     if request.get('hooks', ) is not None:
         if request['hooks'].get('pre_task', ) is not None:
             task_filename = "pre_task_%i" % request['script']['id']
-            script_bits.append(writeScript(directory, task_filename, request['hooks']['pre_task']))
+            script_bits.append(write_script(directory, task_filename, request['hooks']['pre_task']))
 
     # the main task
     task_filename = "script_%i" % request['script']['id']
     task_path = os.path.join(directory, task_filename)
     task_body = request['script']['body']
-    script_bits.append(writeScript(directory, task_filename, task_body))
+    script_bits.append(write_script(directory, task_filename, task_body))
 
     # add post task hook if available
     if request.get('hooks', ) is not None:
         if request['hooks'].get('post_task', ) is not None:
             task_filename = "post_task_%i" % request['script']['id']
-            script_bits.append(writeScript(directory, task_filename, request['hooks']['post_task']))
+            script_bits.append(write_script(directory, task_filename, request['hooks']['post_task']))
 
     callable = ''
     if len(script_bits) > 1:
@@ -176,8 +175,7 @@ class WorkerDeamon(Daemon):
 
         context = zmq.Context(1)
         server = context.socket(zmq.REP)
-        logging.basicConfig(filename=LOGFILE, level=LOGLEVEL)
-        server.bind("tcp://%s:%s" % (BOT, PORT))
+        server.bind("%s://%s:%s" % (PROTOCOL, BOT, PORT))
 
         while True:
             request = server.recv(FLAGS)
@@ -190,7 +188,7 @@ class WorkerDeamon(Daemon):
                     response = {'type': 'ACK'}
                 else:
                     logging.info("Script request")
-                    response = runCommand(request)
+                    response = run_command(request)
                 response = threebot_crypto.encrypt(response, SECRET_KEY)
                 server.send(response, flags=FLAGS)
                 logging.info("Sending response")
@@ -204,11 +202,11 @@ class WorkerDeamon(Daemon):
 if __name__ == "__main__":
         if len(sys.argv) == 3:
             if 'start' == sys.argv[1] and 'debug' == sys.argv[2]:
-                daemon = WorkerDeamon(pidfile, debug_mode=True)
+                daemon = WorkerDeamon(PIDFILE, debug_mode=True)
                 daemon.start()
 
         elif len(sys.argv) == 2:
-            daemon = WorkerDeamon(pidfile)
+            daemon = WorkerDeamon(PIDFILE)
             if 'start' == sys.argv[1]:
                 daemon.start()
             elif 'stop' == sys.argv[1]:
