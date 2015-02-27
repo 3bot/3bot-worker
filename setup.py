@@ -24,5 +24,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=open('requirements.txt').read().split('\n'),
-    scripts=['threebot_worker/worker.py'],
+    scripts=['threebot_worker/threebot-worker'],
 )
