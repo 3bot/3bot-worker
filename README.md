@@ -19,11 +19,13 @@ This section explains which parameter are available.
 The configuration file is located in `~/3bot/config.ini`. If you installed 3bot in an own virtualenv it
 is located in `<path to virtualenv>/3bot/config.ini`
 
-When you first run the threebot-worker Script you will be asked to enter a PORT and SECRET_KEY
+You don't need to create a configuration file by yourself. When you first run the threebot-worker, you will be asked to enter values for the required settings.
 
-## Available settings
+### Available settings
 
 #### BOT_ENDPOINT
+
+required: True
 
 default: *
 
@@ -31,22 +33,33 @@ List of hosts the worker should accept connections from (this is not well tested
 
 #### PORT
 
+required: True
+
 default: None
 
 Port number the worker listens. This Port should be openend by your firewall. The port number from the 3bot application and threebot-worker settings must match.
 
 #### SECRET_KEY
 
+required: True
+
+default: None
+
 The secret key is used to establish a secure connection from the 3bot application to the threebot-worker. The secret key from the 3bot application and threebot-worker settings must match.
+
 **Never share your your secret key!**
 
 #### LOGFILE
 
+required: False
+
 default: `~/3bot/3bot.log`
 
-Path to the logfile. theebot-worker will log all incomming connections, performed workflows and errors
+Path to the logfile. theebot-worker will log all incomming connections, performed workflows and errors.
 
 #### LOGLEVEL
+
+required: False
 
 default: `CRITICAL`
 
