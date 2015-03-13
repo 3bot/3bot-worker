@@ -6,6 +6,14 @@
 *   .
 
 
+### 0.1.0 - 27.02.2015
+
+* Creates a config.ini if not found
+* all threebot-worker relevant files are now located in `~/3bot/` or `<virtualenv>/3bot/`
+* `threebot-worker` is a global available script
+* Updated README
+
+
 ### 0.0.3 - 17.11.2014
 
 * Raise exception only when in debug mode
