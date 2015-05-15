@@ -36,7 +36,7 @@ else:
     print "Creating basic configfile in '%s'" % CONFIGFILE
     print "----"
 
-    os.makedirs(CONFIGFILE)
+    os.makedirs(BASEDIR)
     cfgfile = open(CONFIGFILE, 'w')
 
     # add the settings to the structure of the file, and lets write it out...
