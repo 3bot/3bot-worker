@@ -58,15 +58,15 @@ try:
     BOT = Config.get('3bot-settings', 'BOT_ENDPOINT')
     PORT = Config.get('3bot-settings', 'PORT')
 except:
-    print "Invalid configfile in: '%s'. Could not find BOT or PORT declaration" % CONFIGFILE
-    print "You can find a basic configfile in the Documentation."
+    print "Invalid config file in: '%s'. Could not find BOT or PORT declaration" % CONFIGFILE
+    print "You can find a basic config file in the documentation."
     sys.exit(2)
 
 try:
     SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
 except:
-    print "Invalid configfile in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE
-    print "You can find a basic configfile in the Documentation."
+    print "Invalid config file in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE
+    print "You can find a basic config file in the documentation."
     sys.exit(2)
 
 
