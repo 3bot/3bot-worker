@@ -114,7 +114,7 @@ def write_script(directory, script, body):
 
     # create file
     with open(task_path, 'w+') as task_file:
-        task_file.write(str(body.replace('\r\n', '\n')))
+        task_file.write(body.encode('utf8').replace('\r\n', '\n'))
         logging.info("Saving new Script file at: %s" % task_path)
 
     # change permission
