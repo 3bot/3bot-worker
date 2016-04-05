@@ -8,7 +8,7 @@ import atexit
 from signal import SIGTERM
 
 
-class Daemon:
+class Daemon(object):
     """
     A generic daemon class.
     Usage: subclass the Daemon class and override the run() method
