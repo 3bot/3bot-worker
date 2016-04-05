@@ -191,6 +191,8 @@ def run_command(request):
 
 
 class WorkerDeamon(Daemon):
+    def __init__(self, pidfile, debug_mode=False):
+        super(WorkerDeamon, self).__init__(pidfile, debug_mode)
 
     def run(self):
         logging.info("Starting the 3bot worker listening on %s:%s" % (BOT, PORT))
@@ -226,7 +228,6 @@ if __name__ == "__main__":
             if 'start' == sys.argv[1] and 'debug' == sys.argv[2]:
                 daemon = WorkerDeamon(PIDFILE, debug_mode=True)
                 daemon.start()
-
         elif len(sys.argv) == 2:
             daemon = WorkerDeamon(PIDFILE)
             if 'start' == sys.argv[1]:
