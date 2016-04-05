@@ -9,7 +9,7 @@ import ConfigParser
 import logging
 
 import threebot_crypto
-from daemon import Daemon
+from threebot_worker.daemon import Daemon
 
 PROTOCOL = 'tcp'
 
