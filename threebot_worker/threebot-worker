@@ -9,7 +9,7 @@ import ConfigParser
 import logging
 
 import threebot_crypto
-from threebot_worker.daemon import Daemon
+from daemon import Daemon
 
 PROTOCOL = 'tcp'
 
@@ -184,6 +184,7 @@ if sys.argv[1] in ['restart', 'start', 'status', ]:
     print '---'
     print 'BASEDIR: %s' % str(BASEDIR)
     print 'CONFIGFILE: %s' % str(CONFIGFILE)
+    print 'SCRIPTDIR: %s' % str(SCRIPTDIR)
     print 'ENDPOINT: %s' % str(BOT)
     print 'PORT: %s' % str(PORT)
     print 'LOGFILE: %s' % str(LOGFILE)
