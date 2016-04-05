@@ -26,6 +26,7 @@ SCRIPTDIR = os.path.join(BASEDIR, 'logs')
 LOGFILE = os.path.join(BASEDIR, '3bot.log')
 LOGLEVEL = 'ERROR'
 
+
 Config = ConfigParser.ConfigParser()
 
 if os.path.isfile(CONFIGFILE):
@@ -96,16 +97,6 @@ logging.basicConfig(
     level=loglevel,
     format='%(asctime)s %(message)s',
 )
-
-if len(sys.argv) == 2:
-    if 'start' == sys.argv[1] or 'restart' == sys.argv[1]:
-        print '---'
-        print "Try Starting Worker with following settings found in '%s'" % CONFIGFILE
-        print 'ENDPOINT: %s' % str(BOT)
-        print 'PORT: %s' % str(PORT)
-        print 'LOGFILE: %s' % str(LOGFILE)
-        print 'LOGLEVEL: %s' % str(LOGLEVEL)
-        print '---'
 
 
 def write_script(directory, script, body):
@@ -188,6 +179,17 @@ def run_command(request):
     del p
 
     return response
+
+if sys.argv[1] in ['restart', 'start', 'status', ]:
+    print '---'
+    print 'BASEDIR: %s' % str(BASEDIR)
+    print 'CONFIGFILE: %s' % str(CONFIGFILE)
+    print 'ENDPOINT: %s' % str(BOT)
+    print 'PORT: %s' % str(PORT)
+    print 'LOGFILE: %s' % str(LOGFILE)
+    print 'LOGLEVEL: %s' % str(LOGLEVEL)
+    print 'PIDFILE: %s' % str(PIDFILE)
+    print '---'
 
 
 class WorkerDeamon(Daemon):
