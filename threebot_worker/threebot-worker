@@ -164,7 +164,7 @@ def run_command(request):
         callable = script_bits[0]
         
     if DRY_RUN:
-        # dumping task script to stdout instead of executing it
+        # dumping path to task script to stdout instead of executing it, allows to 'cat' later on the target node
         response = {'stdout': callable, 'stderr': '', 'exit_code': 0}
     else:
         # execute task script
