@@ -199,6 +199,7 @@ if sys.argv[1] in ['restart', 'start', 'status', ]:
     print 'LOGFILE: %s' % str(LOGFILE)
     print 'LOGLEVEL: %s' % str(LOGLEVEL)
     print 'PIDFILE: %s' % str(PIDFILE)
+    print 'DRY_RUN: %s' % str(DRY_RUN)
     print '---'
 
 
