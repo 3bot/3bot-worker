@@ -65,14 +65,25 @@ default: `CRITICAL`
 
 Valid values for `LOGLEVEL` could be taken from [here](https://docs.python.org/2/howto/logging.html).
 
+#### DRY_RUN
+
+Dump path to task script to stdout instead of executing it, allows to 'cat' later on the target node
+
+required: False
+
+default: `False`
+
+Valid values for `DRY_RUN` could be found [here](https://docs.python.org/2/library/configparser.html#ConfigParser.RawConfigParser.getboolean).
+
 ### Example for `confing.ini`
 
     [3bot-settings]
     BOT_ENDPOINT = *
     PORT = 55556
     SECRET_KEY = <YOUR SECRET KEY>
-	LOGFILE = /var/log/3bot-worker.log
-	LOGLEVEL = DEBUG
+    LOGFILE = /var/log/3bot-worker.log
+    LOGLEVEL = DEBUG
+    DRY_RUN = false
 
 
 ## Changelog
