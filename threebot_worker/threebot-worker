@@ -70,6 +70,11 @@ except:
     print "You can find a basic config file in the documentation."
     sys.exit(2)
 
+try:
+    DRY_RUN = Config.getboolean('3bot-settings', 'DRY_RUN')
+except ConfigParser.NoOptionError:
+    DRY_RUN = False
+
 
 try:
     LOGFILE = Config.get('3bot-settings', 'LOGFILE')
@@ -157,27 +162,31 @@ def run_command(request):
         callable = " && ".join(script_bits)
     else:
         callable = script_bits[0]
+        
+    if DRY_RUN:
+        # dumping path to task script to stdout instead of executing it, allows to 'cat' later on the target node
+        response = {'stdout': callable, 'stderr': '', 'exit_code': 0}
+    else:
+        # execute task script
+        # http://www.saltycrane.com/blog/2008/09/how-get-stdout-and-stderr-using-python-subprocess-module/
+        p = subprocess.Popen(callable, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        logging.info("Executing Script file at: %s" % task_path)
+        t_stdout = ""
+        t_stderr = ""
 
-    # execute task script
-    # http://www.saltycrane.com/blog/2008/09/how-get-stdout-and-stderr-using-python-subprocess-module/
-    p = subprocess.Popen(callable, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    logging.info("Executing Script file at: %s" % task_path)
-    t_stdout = ""
-    t_stderr = ""
+        try:
+            t_stdout = p.stdout.read()
+        except AttributeError, e:
+            logging.info(e)
 
-    try:
-        t_stdout = p.stdout.read()
-    except AttributeError, e:
-        logging.info(e)
+        try:
+            t_stderr = p.stderr.read()
+        except AttributeError, e:
+            logging.info(e)
 
-    try:
-        t_stderr = p.stderr.read()
-    except AttributeError, e:
-        logging.info(e)
-
-    response = {'stdout': t_stdout, 'stderr': t_stderr, 'exit_code': p.wait()}
-    del p
-
+        response = {'stdout': t_stdout, 'stderr': t_stderr, 'exit_code': p.wait()}
+        del p
+    
     return response
 
 if sys.argv[1] in ['restart', 'start', 'status', ]:
@@ -190,6 +199,7 @@ if sys.argv[1] in ['restart', 'start', 'status', ]:
     print 'LOGFILE: %s' % str(LOGFILE)
     print 'LOGLEVEL: %s' % str(LOGLEVEL)
     print 'PIDFILE: %s' % str(PIDFILE)
+    print 'DRY_RUN: %s' % str(DRY_RUN)
     print '---'
 
 
