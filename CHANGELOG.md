@@ -6,6 +6,31 @@
 *   .
 
 
+### 0.1.5 - 04.01.2017
+
+* Added dry run mechanism. #13
+
+
+### 0.1.4 - 05.05.2016
+
+* Bugfixes
+
+
+### 0.1.3 - 05.05.2016
+
+* Prints detailed config information
+
+
+### 0.1.2 - 03.1.2015
+
+* Fixed possible error that occurred when script contains non ascii characters
+
+
+### 0.1.1 - 15.05.2015
+
+* A wrong path was used when a configfile has to be created
+
+
 ### 0.1.0 - 27.02.2015
 
 * Creates a config.ini if not found
