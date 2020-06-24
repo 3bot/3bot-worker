@@ -15,11 +15,11 @@ def long_description():
 setup(
     name="threebot-worker",
     version=app.__version__,
-    description="Worker scripts for the 3bot plattform",
+    description="Worker scripts for the 3bot plattform.",
     long_description=long_description(),
     author='arteria GmbH',
     author_email="admin@arteria.ch",
-    maintainer_email="renner@arteria.ch",
+    maintainer_email="admin@arteria.ch",
     url="https://github.com/3bot/3bot-worker",
     packages=find_packages(),
     include_package_data=True,
