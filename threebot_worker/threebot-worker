@@ -5,10 +5,7 @@ import os
 import sys
 import subprocess
 import zmq
-try:
-    import configparser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import logging
 
 import threebot_crypto
@@ -210,13 +207,13 @@ class WorkerDeamon(Daemon):
 
     def run(self):
         logging.info("Starting the 3bot worker listening on %s:%s" % (BOT, PORT))
-
         context = zmq.Context(1)
         server = context.socket(zmq.REP)
         server.bind("%s://%s:%s" % (PROTOCOL, BOT, PORT))
 
         while True:
             request = server.recv(FLAGS)
+            print (request)
             request = threebot_crypto.decrypt(request, SECRET_KEY)
             logging.info("Received request")
             if request:
