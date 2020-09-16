@@ -5,7 +5,10 @@ import os
 import sys
 import subprocess
 import zmq
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import configparser as ConfigParser
 import logging
 
 import threebot_crypto
@@ -27,15 +30,15 @@ LOGFILE = os.path.join(BASEDIR, '3bot.log')
 LOGLEVEL = 'ERROR'
 
 
-Config = ConfigParser.ConfigParser()
+Config = configparser.ConfigParser()
 
 if os.path.isfile(CONFIGFILE):
     Config.read(CONFIGFILE)
 else:
-    print "No configfile found in: '%s'" % CONFIGFILE
-    print "----"
-    print "Creating basic configfile in '%s'" % CONFIGFILE
-    print "----"
+    print("No configfile found in: '%s'" % CONFIGFILE)
+    print("----")
+    print("Creating basic configfile in '%s'" % CONFIGFILE)
+    print("----")
 
     os.makedirs(BASEDIR)
     cfgfile = open(CONFIGFILE, 'w')
@@ -44,10 +47,10 @@ else:
     Config.add_section('3bot-settings')
     Config.set('3bot-settings', 'BOT_ENDPOINT', '*')
 
-    port = raw_input('Enter PORT: ')
+    port = input('Enter PORT: ')
     Config.set('3bot-settings', 'PORT', port)
 
-    sec_key = raw_input('Enter SECRET_KEY: ')
+    sec_key = input('Enter SECRET_KEY: ')
     Config.set('3bot-settings', 'SECRET_KEY', sec_key)
 
     Config.write(cfgfile)
@@ -59,31 +62,31 @@ try:
     BOT = Config.get('3bot-settings', 'BOT_ENDPOINT')
     PORT = Config.get('3bot-settings', 'PORT')
 except:
-    print "Invalid config file in: '%s'. Could not find BOT or PORT declaration" % CONFIGFILE
-    print "You can find a basic config file in the documentation."
+    print("Invalid config file in: '%s'. Could not find BOT or PORT declaration" % CONFIGFILE)
+    print("You can find a basic config file in the documentation.")
     sys.exit(2)
 
 try:
     SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
 except:
-    print "Invalid config file in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE
-    print "You can find a basic config file in the documentation."
+    print("Invalid config file in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE)
+    print("You can find a basic config file in the documentation.")
     sys.exit(2)
 
 try:
     DRY_RUN = Config.getboolean('3bot-settings', 'DRY_RUN')
-except ConfigParser.NoOptionError:
+except configparser.NoOptionError:
     DRY_RUN = False
 
 
 try:
     LOGFILE = Config.get('3bot-settings', 'LOGFILE')
-except ConfigParser.NoOptionError:
+except configparser.NoOptionError:
     pass
 
 try:
     LOGLEVEL = Config.get('3bot-settings', 'LOGLEVEL')
-except ConfigParser.NoOptionError:
+except configparser.NoOptionError:
     pass
 
 if LOGLEVEL == 'DEBUG':
@@ -112,10 +115,8 @@ def write_script(directory, script, body):
     with open(task_path, 'w+') as task_file:
         task_file.write(body.encode('utf8').replace('\r\n', '\n'))
         logging.info("Saving new Script file at: %s" % task_path)
-
     # change permission
-    os.chmod(task_path, 0755)
-
+    os.chmod(task_path, 0o755)
     return task_path
 
 
@@ -162,7 +163,7 @@ def run_command(request):
         callable = " && ".join(script_bits)
     else:
         callable = script_bits[0]
-        
+
     if DRY_RUN:
         # dumping path to task script to stdout instead of executing it, allows to 'cat' later on the target node
         response = {'stdout': callable, 'stderr': '', 'exit_code': 0}
@@ -176,31 +177,31 @@ def run_command(request):
 
         try:
             t_stdout = p.stdout.read()
-        except AttributeError, e:
+        except AttributeError as e:
             logging.info(e)
 
         try:
             t_stderr = p.stderr.read()
-        except AttributeError, e:
+        except AttributeError as e:
             logging.info(e)
 
         response = {'stdout': t_stdout, 'stderr': t_stderr, 'exit_code': p.wait()}
         del p
-    
+
     return response
 
 if sys.argv[1] in ['restart', 'start', 'status', ]:
-    print '---'
-    print 'BASEDIR: %s' % str(BASEDIR)
-    print 'CONFIGFILE: %s' % str(CONFIGFILE)
-    print 'SCRIPTDIR: %s' % str(SCRIPTDIR)
-    print 'ENDPOINT: %s' % str(BOT)
-    print 'PORT: %s' % str(PORT)
-    print 'LOGFILE: %s' % str(LOGFILE)
-    print 'LOGLEVEL: %s' % str(LOGLEVEL)
-    print 'PIDFILE: %s' % str(PIDFILE)
-    print 'DRY_RUN: %s' % str(DRY_RUN)
-    print '---'
+    print('---')
+    print('BASEDIR: %s' % str(BASEDIR))
+    print('CONFIGFILE: %s' % str(CONFIGFILE))
+    print('SCRIPTDIR: %s' % str(SCRIPTDIR))
+    print('ENDPOINT: %s' % str(BOT))
+    print('PORT: %s' % str(PORT))
+    print('LOGFILE: %s' % str(LOGFILE))
+    print('LOGLEVEL: %s' % str(LOGLEVEL))
+    print('PIDFILE: %s' % str(PIDFILE))
+    print('DRY_RUN: %s' % str(DRY_RUN))
+    print('---')
 
 
 class WorkerDeamon(Daemon):
@@ -252,9 +253,9 @@ if __name__ == "__main__":
             elif 'status' == sys.argv[1]:
                 daemon.status()
             else:
-                print "Unknown command"
+                print("Unknown command")
                 sys.exit(2)
             sys.exit(0)
         else:
-            print "usage: %s start|stop|restart|status" % sys.argv[0]
+            print("usage: %s start|stop|restart|status" % sys.argv[0])
             sys.exit(2)
