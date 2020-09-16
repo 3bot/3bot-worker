@@ -64,7 +64,7 @@ except:
     sys.exit(2)
 
 try:
-    SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
+    SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY').encode('utf-8')
 except:
     print("Invalid config file in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE)
     print("You can find a basic config file in the documentation.")
