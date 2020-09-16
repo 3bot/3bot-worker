@@ -64,7 +64,7 @@ except:
     sys.exit(2)
 
 try:
-    SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY').encode('utf-8')
+    SECRET_KEY = Config.get('3bot-settings', 'SECRET_KEY')
 except:
     print("Invalid config file in: '%s'. Could not find SECRET_KEY declaration" % CONFIGFILE)
     print("You can find a basic config file in the documentation.")
@@ -170,8 +170,7 @@ def run_command(request):
         p = subprocess.Popen(callable, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         logging.info("Executing Script file at: %s" % task_path)
         t_stdout = ""
-        t_stderr = ""
-
+        t_stderr = ""  
         try:
             t_stdout = p.stdout.read()
         except AttributeError as e:
